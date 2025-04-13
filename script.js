@@ -11,6 +11,8 @@ const headers = {
 
 async function fetchSubmissions() {
 
+    vote_count = {}
+
     let response = await fetch(url, {
       method: 'GET',
       headers: headers
@@ -20,15 +22,27 @@ async function fetchSubmissions() {
       console.error("Something went wrong in the request:", response.status);
       return;
     }
-    
+
     let data = await response.json();
     
     for (let i = 0; i < data.totalResponses; i++) {
         let votes = data.responses[i].questions[0].value
+        for (let j = 0; j < votes.length; j++) {
+            project_name = votes[j];
+            if (!(project_name in vote_count)) {
+                vote_count[project_name] = 1
+            }
+            else{
+                vote_count[project_name] += 1
+            }
+            
+        }
         console.log(votes)
     }
+    console.log(vote_count)
     
-    console.log(data); 
+    console.log(data)
+    return vote_count;
 
 }
 
