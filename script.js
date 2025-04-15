@@ -43,8 +43,47 @@ async function fetchSubmissions() {
     
     console.log(data)
     return vote_count;
-
 }
 
 
 setInterval(fetchSubmissions, 3000);
+console.log("OUTSIDE: ", fetchSubmissions())
+const data = {
+  Red: 12,
+  Blue: 19,
+  Yellow: 3,
+  Green: 5
+};
+
+// Extract labels and values from the object
+const labels = Object.keys(data);
+const values = Object.values(data);
+
+const ctx = document.getElementById('myChart').getContext('2d');
+
+const myChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: labels,
+    datasets: [{
+      label: 'Votes',
+      data: values,
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.6)',
+        'rgba(54, 162, 235, 0.6)',
+        'rgba(255, 206, 86, 0.6)',
+        'rgba(75, 192, 192, 0.6)'
+      ],
+      borderColor: 'rgba(0,0,0,0.2)',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});

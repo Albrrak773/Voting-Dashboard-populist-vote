@@ -1,1 +1,106 @@
-<script src="/script.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Updating Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <canvas id="myChart" width="400" height="200"></canvas>
+
+  <script>
+    const API_TOKEN = "sk_prod_sdt7cgBLDa97lnpv9T9eRIzwEeg8DqNzEgQXSdOCZhUnfki9BHUHTXnGA2qUYcV5YJymkfDeFl0UpjHh4fm9ZDWuJanKcp7XLqq_21281";
+    const formCode = "8og31yYrENus";
+    const url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=true`;
+    const headers = {
+      'Content-Type': 'application/json',
+      "Authorization": `Bearer ${API_TOKEN}`
+    };
+
+    let chart;
+
+    async function fetchSubmissions() {
+      let vote_count = {};
+
+      let response = await fetch(url, {
+        method: 'GET',
+        headers: headers
+      });
+
+      if (!response.ok) {
+        console.error("Something went wrong in the request:", response.status);
+        return;
+      }
+
+      let data = await response.json();
+
+      for (let i = 0; i < data.totalResponses; i++) {
+        let votes = data.responses[i].questions[0].value;
+        for (let j = 0; j < votes.length; j++) {
+          let project_name = votes[j];
+          vote_count[project_name] = (vote_count[project_name] || 0) + 1;
+        }
+      }
+      console.log(vote_count);
+      updateChart(vote_count);
+    }
+
+    function updateChart(vote_count) {
+      // Sort vote_count by descending value
+      const sortedEntries = Object.entries(vote_count).sort((a, b) => b[1] - a[1]);
+      const labels = sortedEntries.map(entry => entry[0]);
+      const values = sortedEntries.map(entry => entry[1]);
+
+      if (!chart) {
+        const ctx = document.getElementById('myChart').getContext('2d');
+        chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Votes',
+              data: values,
+              backgroundColor: 'rgba(66, 133, 244, 1)', // Solid color
+              borderColor: 'rgba(0,0,0,0.5)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            animation: {
+              duration: 1000,
+              easing: 'easeOutQuart'
+            },
+            plugins: {
+              legend: {
+                display: false // Hide the legend
+              }
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: false // remove vertical grid lines
+                }
+              },
+              y: {
+                beginAtZero: true,
+                grid: {
+                  drawTicks: true,
+                  color: (ctx) => ctx.index % 2 === 0 ? 'rgba(200,200,200,0.2)' : 'transparent' // few horizontal lines
+                }
+              }
+            }
+          }
+        });
+      } else {
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = values;
+        chart.update();
+      }
+    }
+
+    // Call initially and then every 3 seconds (for example)
+    fetchSubmissions();
+    setInterval(fetchSubmissions, 3000);
+  </script>
+</body>
+</html>
