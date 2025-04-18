@@ -1,19 +1,35 @@
-
-
 const API_TOKEN = "sk_prod_sdt7cgBLDa97lnpv9T9eRIzwEeg8DqNzEgQXSdOCZhUnfki9BHUHTXnGA2qUYcV5YJymkfDeFl0UpjHh4fm9ZDWuJanKcp7XLqq_21281";
 const formCode = "8og31yYrENus";
 const url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=true`;
-
 const headers = {
-  "Authorization": `Bearer ${API_TOKEN}`,
-  "Content-Type": "application/json"
+  'Content-Type': 'application/json',
+  "Authorization": `Bearer ${API_TOKEN}`
 };
 
+let chart;
+const colorMap = {};
+
+const primaryColors = [
+  'rgba(255, 99, 132, 0.6)',   // red
+  'rgba(255, 159, 64, 0.6)',   // orange
+  'rgba(255, 206, 86, 0.6)',   // yellow
+  'rgba(75, 192, 192, 0.6)',   // teal
+  'rgba(54, 162, 235, 0.6)',   // blue
+  'rgba(153, 102, 255, 0.6)'   // purple
+];
+
+function getColorForLabel(label, index) {
+  if (!colorMap[label]) {
+    colorMap[label] = primaryColors[index % primaryColors.length];
+  }
+  return colorMap[label];
+}
+
 async function fetchSubmissions() {
+  let vote_count = {};
 
-    vote_count = {}
-
-    let response = await fetch(url, {
+  try {
+    const response = await fetch(url, {
       method: 'GET',
       headers: headers
     });
@@ -23,67 +39,76 @@ async function fetchSubmissions() {
       return;
     }
 
-    let data = await response.json();
-    
+    const data = await response.json();
+
     for (let i = 0; i < data.totalResponses; i++) {
-        let votes = data.responses[i].questions[0].value
-        for (let j = 0; j < votes.length; j++) {
-            project_name = votes[j];
-            if (!(project_name in vote_count)) {
-                vote_count[project_name] = 1
-            }
-            else{
-                vote_count[project_name] += 1
-            }
-            
-        }
-        console.log(votes)
-    }
-    console.log(vote_count)
-    
-    console.log(data)
-    return vote_count;
-}
-
-
-setInterval(fetchSubmissions, 3000);
-console.log("OUTSIDE: ", fetchSubmissions())
-const data = {
-  Red: 12,
-  Blue: 19,
-  Yellow: 3,
-  Green: 5
-};
-
-// Extract labels and values from the object
-const labels = Object.keys(data);
-const values = Object.values(data);
-
-const ctx = document.getElementById('myChart').getContext('2d');
-
-const myChart = new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: labels,
-    datasets: [{
-      label: 'Votes',
-      data: values,
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.6)',
-        'rgba(54, 162, 235, 0.6)',
-        'rgba(255, 206, 86, 0.6)',
-        'rgba(75, 192, 192, 0.6)'
-      ],
-      borderColor: 'rgba(0,0,0,0.2)',
-      borderWidth: 1
-    }]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: {
-        beginAtZero: true
+      let votes = data.responses[i].questions[0].value;
+      for (let j = 0; j < votes.length; j++) {
+        let project_name = votes[j];
+        vote_count[project_name] = (vote_count[project_name] || 0) + 1;
       }
     }
+    console.log(vote_count)
+    updateChart(vote_count);
+  } catch (err) {
+    console.error("Fetch error:", err);
   }
-});
+}
+
+function updateChart(vote_count) {
+  const sortedEntries = Object.entries(vote_count).sort((a, b) => b[1] - a[1]);
+  const labels = sortedEntries.map(entry => entry[0]);
+  const values = sortedEntries.map(entry => entry[1]);
+  const backgroundColors = labels.map((label, index) => getColorForLabel(label, index));
+
+  if (!chart) {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Votes',
+          data: values,
+          backgroundColor: backgroundColors,
+          borderColor: 'rgba(0,0,0,0.2)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: {
+          duration: 1000,
+          easing: 'easeInOutCubic'
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: {
+              drawTicks: true,
+              color: (ctx) => ctx.index % 2 === 0 ? 'rgba(200,200,200,0.2)' : 'transparent'
+            }
+          }
+        }
+      }
+    });
+  } else {
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = values;
+    chart.data.datasets[0].backgroundColor = backgroundColors;
+    chart.update();
+  }
+}
+
+fetchSubmissions();
+setInterval(() => fetchSubmissions(), 3000);
