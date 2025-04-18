@@ -66,7 +66,7 @@ async function fetchSubmissions() {
 
         vote_count = extract_votes(data)
         vote_count = await get_fake_data(); // Needs to be removed
-        vote_count = vote_count['set3']
+        vote_count = vote_count['set1']
         console.log("Votes: ", vote_count)
         updateChart(vote_count);
     } catch (err) {
@@ -78,8 +78,16 @@ async function fetchSubmissions() {
 function get_optoins(Horizontal){
     let axies;
     let temp_option = {};
-
+    
+    let font_options = {
+            font: {
+                size: 16,       // Change this to make labels bigger
+                family: 'Arial' // Or any other font you like
+            },
+            color: '#000' // Optional: label color
+    }
     let y_options = {
+        ticks: font_options,
         grid: {
             display: false
         }
@@ -87,6 +95,7 @@ function get_optoins(Horizontal){
 
     let x_options = {
         beginAtZero: true,
+        ticks: font_options,
         grid: {
             drawTicks: true,
             color: (ctx) => ctx.index % 2 === 0 ? 'rgba(200,200,200,0.2)' : 'transparent'
@@ -113,6 +122,11 @@ function get_optoins(Horizontal){
         scales: {
             x: x_options,
             y: y_options
+        },
+        plugins: {
+            legend: {
+              display: false
+            }
         }
     }
 }
