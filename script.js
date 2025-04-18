@@ -25,6 +25,22 @@ function getColorForLabel(label, index) {
     return colorMap[label];
 }
 
+async function get_fake_data(){
+    return fetch('Mock_Data.json')
+    .then(response => response.json())
+};
+
+function extract_votes(data){
+    let vote_count = {};
+    for (let i = 0; i < data.totalResponses; i++) {
+        let votes = data.responses[i].questions[0].value;
+        for (let j = 0; j < votes.length; j++) {
+            let project_name = votes[j];
+            vote_count[project_name] = (vote_count[project_name] || 0) + 1;
+        }
+    };
+    return vote_count;
+};
 
 /**
  * Fethces the latest votes from the Fillout API.
@@ -49,25 +65,15 @@ async function fetchSubmissions() {
         const data = await response.json();
 
         vote_count = extract_votes(data)
-
-        console.log(vote_count)
+        vote_count = await get_fake_data(); // Needs to be removed
+        vote_count = vote_count['set3']
+        console.log("Votes: ", vote_count)
         updateChart(vote_count);
     } catch (err) {
         console.error("Fetch error:", err);
     }
 }
 
-function extract_votes(data){
-    let vote_count = {};
-    for (let i = 0; i < data.totalResponses; i++) {
-        let votes = data.responses[i].questions[0].value;
-        for (let j = 0; j < votes.length; j++) {
-            let project_name = votes[j];
-            vote_count[project_name] = (vote_count[project_name] || 0) + 1;
-        }
-    };
-    return vote_count;
-}
 
 function get_optoins(Horizontal){
     let axies;
@@ -131,7 +137,7 @@ function updateChart(vote_count) {
                     borderWidth: 1
                 }]
             },
-            options: get_optoins(false)
+            options: get_optoins(true)
         });
     } else {
         chart.data.labels = labels;
