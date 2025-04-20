@@ -66,7 +66,7 @@ async function fetchSubmissions() {
 
         vote_count = extract_votes(data)
         vote_count = await get_fake_data(); // Needs to be removed
-        vote_count = vote_count['set1']
+        vote_count = vote_count['set1'] // Needs to be removed
         console.log("Votes: ", vote_count)
         updateChart(vote_count);
     } catch (err) {
@@ -75,7 +75,7 @@ async function fetchSubmissions() {
 }
 
 
-function get_optoins(Horizontal){
+function get_options(){
     return {
         indexAxis: 'y',
         responsive: true,
@@ -116,6 +116,19 @@ function get_optoins(Horizontal){
             legend: {
               display: false
             },
+            title: {
+                display: true,
+                text: 'اصوات مشاريع التخرج',
+                font: {
+                    size: 40,
+                    family: 'Cairo',
+                    weight: '400'
+                },
+                padding: {
+                    top: 10,
+                    bottom: 30
+                }
+            },
             datalabels: {
                 color: '#000',
                 anchor: 'end',
@@ -153,7 +166,7 @@ function updateChart(vote_count) {
             },
             
             plugins: [ChartDataLabels],
-            options: get_optoins()
+            options: get_options()
         });
     } else {
         chart.data.labels = labels;
