@@ -66,7 +66,7 @@ async function fetchSubmissions() {
 
         vote_count = extract_votes(data)
         vote_count = await get_fake_data(); // Needs to be removed
-        vote_count = vote_count['set1']
+        vote_count = vote_count['set1'] // Needs to be removed
         console.log("Votes: ", vote_count)
         updateChart(vote_count);
     } catch (err) {
@@ -75,57 +75,70 @@ async function fetchSubmissions() {
 }
 
 
-function get_optoins(Horizontal){
-    let axies;
-    let temp_option = {};
-    
-    let font_options = {
-            font: {
-                size: 16,       // Change this to make labels bigger
-                family: 'Arial' // Or any other font you like
-            },
-            color: '#000' // Optional: label color
-    }
-    let y_options = {
-        ticks: font_options,
-        grid: {
-            display: false
-        }
-    }
-
-    let x_options = {
-        beginAtZero: true,
-        ticks: font_options,
-        grid: {
-            drawTicks: true,
-            color: (ctx) => ctx.index % 2 === 0 ? 'rgba(200,200,200,0.2)' : 'transparent'
-        }
-    }
-
-    if (Horizontal) { 
-        axies = 'y'
-    }
-    else {
-        axies = 'x'
-        temp_option = y_options;
-        y_options = x_options
-        x_options = temp_option;
-    }
-
+function get_options(){
     return {
-        indexAxis: axies,
+        indexAxis: 'y',
         responsive: true,
         animation: {
             duration: 1000,
             easing: 'easeInOutCubic'
         },
         scales: {
-            x: x_options,
-            y: y_options
+            x: {
+                beginAtZero: true,
+                ticks: {
+                    font: {
+                        size: 16,
+                        family: 'Arial'
+                    },
+                    color: '#000',
+                    display: false
+                },
+                grid: {
+                    drawTicks: true,
+                    color: (ctx) => ctx.index % 2 === 0 ? 'rgba(200,200,200,0.2)' : 'transparent'
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 16,
+                        family: 'Arial'
+                    },
+                    color: '#000'
+                },
+                grid: {
+                    display: false
+                }
+            }
         },
         plugins: {
             legend: {
               display: false
+            },
+            title: {
+                display: true,
+                text: 'اصوات مشاريع التخرج',
+                font: {
+                    size: 40,
+                    family: 'Cairo',
+                    weight: '400'
+                },
+                padding: {
+                    top: 10,
+                    bottom: 30
+                }
+            },
+            datalabels: {
+                color: '#000',
+                anchor: 'end',
+                align: 'right',
+                offset: 4,
+                font: {
+                    weight: 'normal',
+                    size: 14
+                },
+                formatter: value => value
             }
         }
     }
@@ -151,7 +164,9 @@ function updateChart(vote_count) {
                     borderWidth: 1
                 }]
             },
-            options: get_optoins(true)
+            
+            plugins: [ChartDataLabels],
+            options: get_options()
         });
     } else {
         chart.data.labels = labels;
