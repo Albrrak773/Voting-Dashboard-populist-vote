@@ -76,56 +76,56 @@ async function fetchSubmissions() {
 
 
 function get_optoins(Horizontal){
-    let axies;
-    let temp_option = {};
-    
-    let font_options = {
-            font: {
-                size: 16,       // Change this to make labels bigger
-                family: 'Arial' // Or any other font you like
-            },
-            color: '#000' // Optional: label color
-    }
-    let y_options = {
-        ticks: font_options,
-        grid: {
-            display: false
-        }
-    }
-
-    let x_options = {
-        beginAtZero: true,
-        ticks: font_options,
-        grid: {
-            drawTicks: true,
-            color: (ctx) => ctx.index % 2 === 0 ? 'rgba(200,200,200,0.2)' : 'transparent'
-        }
-    }
-
-    if (Horizontal) { 
-        axies = 'y'
-    }
-    else {
-        axies = 'x'
-        temp_option = y_options;
-        y_options = x_options
-        x_options = temp_option;
-    }
-
     return {
-        indexAxis: axies,
+        indexAxis: 'y',
         responsive: true,
         animation: {
             duration: 1000,
             easing: 'easeInOutCubic'
         },
         scales: {
-            x: x_options,
-            y: y_options
+            x: {
+                beginAtZero: true,
+                ticks: {
+                    font: {
+                        size: 16,
+                        family: 'Arial'
+                    },
+                    color: '#000',
+                    display: false
+                },
+                grid: {
+                    drawTicks: true,
+                    color: (ctx) => ctx.index % 2 === 0 ? 'rgba(200,200,200,0.2)' : 'transparent'
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 16,
+                        family: 'Arial'
+                    },
+                    color: '#000'
+                },
+                grid: {
+                    display: false
+                }
+            }
         },
         plugins: {
             legend: {
               display: false
+            },
+            datalabels: {
+                color: '#000',
+                anchor: 'end',
+                align: 'right',
+                offset: 4,
+                font: {
+                    weight: 'normal',
+                    size: 14
+                },
+                formatter: value => value
             }
         }
     }
@@ -151,7 +151,9 @@ function updateChart(vote_count) {
                     borderWidth: 1
                 }]
             },
-            options: get_optoins(true)
+            
+            plugins: [ChartDataLabels],
+            options: get_optoins()
         });
     } else {
         chart.data.labels = labels;
