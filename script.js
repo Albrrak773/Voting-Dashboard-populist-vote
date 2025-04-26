@@ -1,14 +1,17 @@
 const API_TOKEN = "sk_prod_yztOc8RHXUP2N6EaTMABg3kHLu4RzLCgemnkndDXdp3horj0GCNVYfjZNaSVLNqUvICSdk8frpMChaQQaAAyNZ24oAmizQwGH8k_22186";
 const formCode_boys = "mexUmH9LA8us";
-
-const url = `https://api.fillout.com/v1/api/forms/${formCode_boys}/submissions?includePreview=true`;
+const submissions_url = `https://api.fillout.com/v1/api/forms/${formCode_boys}/submissions?includePreview=true`;
+const questions_url = "https://api.fillout.com/v1/api/forms/mexUmH9LA8us"
+let first_time = true
 const headers = {
     'Content-Type': 'application/json',
     "Authorization": `Bearer ${API_TOKEN}`
 };
-
 let chart;
 const colorMap = {};
+
+// async function intilaize_votes(){
+// };
 
 const primaryColors = [
     'rgba(255, 99, 132, 0.6)',   // red
@@ -31,12 +34,20 @@ async function get_fake_data(){
     .then(response => response.json())
 };
 
-function extract_votes(data){
-    let vote_count = {};
+function shorten_name(project_name){
+    console.log("len: ", project_name.length);
+    if (project_name.length > 32) {
+        project_name = project_name.slice(0, 32) + "..."
+    }
+    console.log("len after: ", project_name);
+    return project_name
+}
+
+function extract_votes(data, vote_count){
     for (let i = 0; i < data.totalResponses; i++) {
         let votes = data.responses[i].questions[0].value;
         for (let j = 0; j < votes.length; j++) {
-            let project_name = votes[j];
+            let project_name = shorten_name(votes[j]);
             vote_count[project_name] = (vote_count[project_name] || 0) + 1;
         }
     };
@@ -50,10 +61,24 @@ function extract_votes(data){
  * @returns {Object}  {label:votes}
  */
 async function fetchSubmissions() {
-    let vote_count = {};
+
+    // Get all Questions Names and intitlize them with 1
+    let vote_count = {}
+    console.log("Intilaizing Votes....");
+    const response = await fetch(questions_url, {
+        method: 'GET',
+        headers: headers
+    });
+
+    const data = await response.json();
+    data.questions[0].options.forEach(element => {
+        let name = shorten_name(element.value)
+        vote_count[name] = 1
+    });
+    console.log("VOTES FIRST TIME: ", vote_count);
 
     try {
-        const response = await fetch(url, {
+        const response = await fetch(submissions_url, {
             method: 'GET',
             headers: headers
         });
@@ -65,7 +90,7 @@ async function fetchSubmissions() {
 
         const data = await response.json();
 
-        vote_count = extract_votes(data)
+        vote_count = extract_votes(data, vote_count)
         // vote_count = await get_fake_data(); // Needs to be removed
         // vote_count = vote_count['set1'] // Needs to be removed
         console.log("Votes: ", vote_count)
@@ -73,6 +98,8 @@ async function fetchSubmissions() {
     } catch (err) {
         console.error("Fetch error:", err);
     }
+
+    return vote_count
 }
 
 
