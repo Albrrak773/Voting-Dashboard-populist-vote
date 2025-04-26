@@ -27,15 +27,19 @@ def main():
         picks = choose_random_values(all_projects)
         for p in picks:
             vote_counts[p] += 1
-        save_vote_counts(vote_counts)
 
         # 4) send the request
         payload = build_payload(picks)
+        print("Making a POST requeest....", end='')
         resp = requests.post(
             SUBMIT_URL,
             headers=HEADERS,
             data=json.dumps(payload, ensure_ascii=False)
         )
+        if (resp.status_code == 200):
+            print("\033[32m [200 OK]\033[0m")
+        else:
+            print("\033[31m [ERROR]\033[0m")
 
         # 5) log response
         try:
@@ -47,7 +51,7 @@ def main():
             json.dump(result, f, ensure_ascii=False, indent=4)
             f.write("\n")
 
-        print(f"[{time.strftime('%H:%M:%S')}] sent {picks} → status {resp.status_code}")
+        save_vote_counts(vote_counts)
         time.sleep(5)
 
 def fetch_labels():
