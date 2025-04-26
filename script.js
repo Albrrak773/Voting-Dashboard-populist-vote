@@ -1,8 +1,17 @@
 const API_TOKEN = "sk_prod_yztOc8RHXUP2N6EaTMABg3kHLu4RzLCgemnkndDXdp3horj0GCNVYfjZNaSVLNqUvICSdk8frpMChaQQaAAyNZ24oAmizQwGH8k_22186";
-const formCode_boys = "mexUmH9LA8us";
-const submissions_url = `https://api.fillout.com/v1/api/forms/${formCode_boys}/submissions?includePreview=true`;
-const questions_url = "https://api.fillout.com/v1/api/forms/mexUmH9LA8us"
-let first_time = true
+
+const isBoys = true;
+if (isBoys) {
+    var formCode = "mexUmH9LA8us";
+} else {
+    var formCode = "wbjvtoxwHPus"
+}
+
+const submissions_url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=true`;
+const questions_url = `https://api.fillout.com/v1/api/forms/${formCode}`
+
+
+
 const headers = {
     'Content-Type': 'application/json',
     "Authorization": `Bearer ${API_TOKEN}`
