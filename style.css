@@ -2,7 +2,9 @@
     padding: 0;
     margin: 0;
 }
-
+body{
+    padding: 25px;
+}
 #myChart {
     padding: 30px;
     width: 100% !important;

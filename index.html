@@ -1,13 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
   <title>Live Updating Chart</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
   <link rel="stylesheet" href="/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
+  <div class="w-full flex justify-center">
+    <div class="text-center leading-snug mt-4">
+      <p class="text-2xl font-bold text-[#2d2a66] tracking-wide mb-1.5" style="font-family: 'Tajawal', sans-serif;">
+        ملتقى كلية الحاسب العلمي الثاني
+      </p>
+      <p class="text-2xl font-bold text-[#2d2a66] tracking-wide">
+        Second Scientific Event of COC
+      </p>
+    </div>
+    <img 
+    src="/assets/logo.png" 
+    alt="COC Logo" 
+    class="h-[6rem] w-auto ml-3.5 mt-[-0.9rem]"
+    >
+
+  </div>
   <canvas id="myChart"></canvas>
   <script src="/script.js"></script>
 </body>

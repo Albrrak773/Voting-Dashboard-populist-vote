@@ -1,6 +1,6 @@
 const API_TOKEN = "sk_prod_yztOc8RHXUP2N6EaTMABg3kHLu4RzLCgemnkndDXdp3horj0GCNVYfjZNaSVLNqUvICSdk8frpMChaQQaAAyNZ24oAmizQwGH8k_22186";
 
-const isBoys = true;
+const isBoys = false;
 const initializer_value = 0
 
 if (isBoys) {
@@ -11,8 +11,6 @@ if (isBoys) {
 
 const submissions_url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=true`;
 const questions_url = `https://api.fillout.com/v1/api/forms/${formCode}`
-
-
 
 const headers = {
     'Content-Type': 'application/json',
@@ -46,11 +44,9 @@ async function get_fake_data(){
 };
 
 function shorten_name(project_name){
-    console.log("len: ", project_name.length);
     if (project_name.length > 32) {
         project_name = project_name.slice(0, 32) + "..."
     }
-    console.log("len after: ", project_name);
     return project_name
 }
 
@@ -116,6 +112,7 @@ async function fetchSubmissions() {
 
 function get_options(){
     return {
+        devicePixelRatio: 2,
         indexAxis: 'y',
         responsive: true,
         animation: {
@@ -162,11 +159,12 @@ function get_options(){
             },
             title: {
                 display: true,
+                color: '#2d2a66',
                 text: 'اصوات مشاريع التخرج',
                 font: {
                     size: 40,
-                    family: 'Cairo',
-                    weight: '400'
+                    family: 'Tajawal',
+                    weight: '500'
                 },
                 padding: {
                     top: 10,
