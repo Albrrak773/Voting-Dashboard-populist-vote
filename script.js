@@ -1,6 +1,6 @@
 const API_TOKEN = "sk_prod_yztOc8RHXUP2N6EaTMABg3kHLu4RzLCgemnkndDXdp3horj0GCNVYfjZNaSVLNqUvICSdk8frpMChaQQaAAyNZ24oAmizQwGH8k_22186";
 
-const isBoys = false;
+const isBoys = true;
 const initializer_value = 0
 
 if (isBoys) {
@@ -9,7 +9,7 @@ if (isBoys) {
     var formCode = "wbjvtoxwHPus"
 }
 
-const submissions_url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=true`;
+const submissions_url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=false&limit=50`;
 const questions_url = `https://api.fillout.com/v1/api/forms/${formCode}`
 
 const headers = {
@@ -50,9 +50,9 @@ function shorten_name(project_name){
     return project_name
 }
 
-function extract_votes(data, vote_count){
-    for (let i = 0; i < data.totalResponses; i++) {
-        let votes = data.responses[i].questions[0].value;
+function count_votes(responses, vote_count){
+    for (let i = 0; i < responses.length; i++) {
+        let votes = responses[i].questions[0].value;
         for (let j = 0; j < votes.length; j++) {
             let project_name = shorten_name(votes[j]);
             vote_count[project_name] = (vote_count[project_name] || 0) + 1;
@@ -68,47 +68,58 @@ function extract_votes(data, vote_count){
  * @returns {Object}  {label:votes}
  */
 async function fetchSubmissions() {
-
-    // Get all Questions Names and intitlize them with 1
-    let vote_count = {}
-    console.log("Intilaizing Votes....");
-    const response = await fetch(questions_url, {
-        method: 'GET',
-        headers: headers
+    // 1) build template for vote_count
+    let vote_count = {};
+    console.log("Initializing vote_count template…");
+    const qRes  = await fetch(questions_url, { method: 'GET', headers });
+    const qData = await qRes.json();
+    qData.questions[0].options.forEach(opt => {
+      vote_count[shorten_name(opt.value)] = initializer_value;
     });
-
-    const data = await response.json();
-    data.questions[0].options.forEach(element => {
-        let name = shorten_name(element.value)
-        vote_count[name] = initializer_value
-    });
-    console.log("VOTES FIRST TIME: ", vote_count);
-
+  
     try {
-        const response = await fetch(submissions_url, {
-            method: 'GET',
-            headers: headers
-        });
-
-        if (!response.ok) {
-            console.error("Something went wrong in the request:", response.status);
-            return;
+      // 2) page through ALL submissions by response-count
+      const allResponses = [];
+      let offset   = 0;
+      let pageSize = Infinity;
+  
+      while (true) {
+        const pageUrl = `${submissions_url}&offset=${offset}`;
+        const res     = await fetch(pageUrl, { method: 'GET', headers });
+        if (!res.ok) {
+          console.error("Failed to fetch submissions:", res.status);
+          break;
         }
-
-        const data = await response.json();
-
-        vote_count = extract_votes(data, vote_count)
-        // vote_count = await get_fake_data(); // Needs to be removed
-        // vote_count = vote_count['set1'] // Needs to be removed
-        console.log("Votes: ", vote_count)
-        updateChart(vote_count);
+  
+        const page = await res.json();
+        const responses = page.responses;
+  
+        // record how many come back on page #1
+        if (offset === 0) pageSize = responses.length;
+  
+        // nothing more? bail out
+        if (responses.length === 0) break;
+  
+        // accumulate
+        allResponses.push(...responses);
+  
+        // if this page came back smaller than “full”, we hit the end
+        if (responses.length < pageSize) break;
+  
+        // otherwise bump offset and fetch the next chunk
+        offset += responses.length;
+      }
+      
+      vote_count = count_votes(allResponses, vote_count);
+      console.log("Tally from all pages:", vote_count);
+      updateChart(vote_count);
+  
     } catch (err) {
-        console.error("Fetch error:", err);
+      console.error("Fetch error:", err);
     }
-
-    return vote_count
-}
-
+  
+    return vote_count;
+  }
 
 function get_options(){
     return {

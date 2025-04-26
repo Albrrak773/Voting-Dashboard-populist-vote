@@ -1,19 +1,19 @@
 {
     "submissions": [
         {
-            "submissionId": "b0eab869-3952-4263-876f-db0616d83ad2",
-            "submissionTime": "2025-04-26T17:21:56.971Z",
-            "lastUpdatedAt": "2025-04-26T17:21:56.971Z",
-            "startedAt": "2025-04-26T17:21:56.971Z",
+            "submissionId": "054218e7-2fce-4434-8e2f-34ff12726806",
+            "submissionTime": "2025-04-26T21:34:16.167Z",
+            "lastUpdatedAt": "2025-04-26T21:34:16.167Z",
+            "startedAt": "2025-04-26T21:34:16.167Z",
             "questions": [
                 {
                     "id": "i52M",
                     "name": "صوّت ل3 مشاريع",
                     "type": "ImagePicker",
                     "value": [
-                        "Suspicious Activity Tracking AI Camera",
-                        "A Management and Organization System for Students’ Exit from Schools",
-                        "SafeHouse"
+                        "Blind Aid Reading Glasses",
+                        "Heart Disease prediction system",
+                        "MEETING MANAGEMENT SYSTEM POWERED BY AI"
                     ]
                 }
             ],
