@@ -1,6 +1,8 @@
 const API_TOKEN = "sk_prod_yztOc8RHXUP2N6EaTMABg3kHLu4RzLCgemnkndDXdp3horj0GCNVYfjZNaSVLNqUvICSdk8frpMChaQQaAAyNZ24oAmizQwGH8k_22186";
 
 const isBoys = true;
+const initializer_value = 0
+
 if (isBoys) {
     var formCode = "mexUmH9LA8us";
 } else {
@@ -82,7 +84,7 @@ async function fetchSubmissions() {
     const data = await response.json();
     data.questions[0].options.forEach(element => {
         let name = shorten_name(element.value)
-        vote_count[name] = 1
+        vote_count[name] = initializer_value
     });
     console.log("VOTES FIRST TIME: ", vote_count);
 
