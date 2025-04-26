@@ -1,6 +1,7 @@
-const API_TOKEN = "sk_prod_sdt7cgBLDa97lnpv9T9eRIzwEeg8DqNzEgQXSdOCZhUnfki9BHUHTXnGA2qUYcV5YJymkfDeFl0UpjHh4fm9ZDWuJanKcp7XLqq_21281";
-const formCode = "8og31yYrENus";
-const url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=true`;
+const API_TOKEN = "sk_prod_yztOc8RHXUP2N6EaTMABg3kHLu4RzLCgemnkndDXdp3horj0GCNVYfjZNaSVLNqUvICSdk8frpMChaQQaAAyNZ24oAmizQwGH8k_22186";
+const formCode_boys = "mexUmH9LA8us";
+
+const url = `https://api.fillout.com/v1/api/forms/${formCode_boys}/submissions?includePreview=true`;
 const headers = {
     'Content-Type': 'application/json',
     "Authorization": `Bearer ${API_TOKEN}`
@@ -65,8 +66,8 @@ async function fetchSubmissions() {
         const data = await response.json();
 
         vote_count = extract_votes(data)
-        vote_count = await get_fake_data(); // Needs to be removed
-        vote_count = vote_count['set1'] // Needs to be removed
+        // vote_count = await get_fake_data(); // Needs to be removed
+        // vote_count = vote_count['set1'] // Needs to be removed
         console.log("Votes: ", vote_count)
         updateChart(vote_count);
     } catch (err) {
