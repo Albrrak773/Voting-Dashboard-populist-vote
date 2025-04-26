@@ -111,6 +111,11 @@ function get_options(){
             duration: 1000,
             easing: 'easeInOutCubic'
         },
+        layout: {
+            padding: {
+                right: 30
+            }
+        },
         scales: {
             x: {
                 beginAtZero: true,
