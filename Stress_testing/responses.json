@@ -1,10 +1,10 @@
 {
     "submissions": [
         {
-            "submissionId": "054218e7-2fce-4434-8e2f-34ff12726806",
-            "submissionTime": "2025-04-26T21:34:16.167Z",
-            "lastUpdatedAt": "2025-04-26T21:34:16.167Z",
-            "startedAt": "2025-04-26T21:34:16.167Z",
+            "submissionId": "c5074427-c0ee-4c28-9113-85e0764ac96f",
+            "submissionTime": "2025-04-27T07:02:43.346Z",
+            "lastUpdatedAt": "2025-04-27T07:02:43.346Z",
+            "startedAt": "2025-04-27T07:02:43.346Z",
             "questions": [
                 {
                     "id": "i52M",
@@ -12,8 +12,8 @@
                     "type": "ImagePicker",
                     "value": [
                         "Blind Aid Reading Glasses",
-                        "Heart Disease prediction system",
-                        "MEETING MANAGEMENT SYSTEM POWERED BY AI"
+                        "Sign Language Classification to Text Conversion - تحويل لغة الإشارة إلى نص مكتوب",
+                        "Carry It"
                     ]
                 }
             ],

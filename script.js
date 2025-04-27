@@ -2,14 +2,14 @@ const API_TOKEN = "sk_prod_yztOc8RHXUP2N6EaTMABg3kHLu4RzLCgemnkndDXdp3horj0GCNVY
 
 const isBoys = true;
 const initializer_value = 0
-
+var is_fetching = true
 if (isBoys) {
     var formCode = "mexUmH9LA8us";
 } else {
     var formCode = "wbjvtoxwHPus"
 }
 
-const submissions_url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=false&limit=50`;
+const submissions_url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=false&limit=150`;
 const questions_url = `https://api.fillout.com/v1/api/forms/${formCode}`
 
 const headers = {
@@ -68,7 +68,9 @@ function count_votes(responses, vote_count){
  * @returns {Object}  {label:votes}
  */
 async function fetchSubmissions() {
+    is_fetching = false
     // 1) build template for vote_count
+    let count = 0;
     let vote_count = {};
     console.log("Initializing vote_count template…");
     const qRes  = await fetch(questions_url, { method: 'GET', headers });
@@ -84,12 +86,16 @@ async function fetchSubmissions() {
       let pageSize = Infinity;
   
       while (true) {
+        count++;
+        console.log(`Making Request [${count}]`);
+        
         const pageUrl = `${submissions_url}&offset=${offset}`;
         const res     = await fetch(pageUrl, { method: 'GET', headers });
         if (!res.ok) {
           console.error("Failed to fetch submissions:", res.status);
           break;
         }
+        console.log(`Status: [${res.status}]`);
   
         const page = await res.json();
         const responses = page.responses;
@@ -109,7 +115,7 @@ async function fetchSubmissions() {
         // otherwise bump offset and fetch the next chunk
         offset += responses.length;
       }
-      
+
       vote_count = count_votes(allResponses, vote_count);
       console.log("Tally from all pages:", vote_count);
       updateChart(vote_count);
@@ -117,7 +123,7 @@ async function fetchSubmissions() {
     } catch (err) {
       console.error("Fetch error:", err);
     }
-  
+    is_fetching = true
     return vote_count;
   }
 
@@ -230,4 +236,17 @@ function updateChart(vote_count) {
 }
 
 fetchSubmissions();
-setInterval(() => fetchSubmissions(), 3000);
+var wait_counter = 0;
+setInterval(() => {
+    if (is_fetching){
+        wait_counter = 0;
+        fetchSubmissions()
+    }
+    else {
+        wait_counter++;
+        console.log(`WAITING....${wait_counter}`);
+        return
+    }
+
+
+}, 1000);
