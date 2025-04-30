@@ -4,9 +4,9 @@ const isBoys = true;
 const initializer_value = 0
 var is_fetching = true
 if (isBoys) {
-    var formCode = "mexUmH9LA8us";
+    var formCode = "waR9keQ2snus";
 } else {
-    var formCode = "wbjvtoxwHPus"
+    var formCode = "2jb497WjEbus"
 }
 
 const submissions_url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=false&limit=150`;
