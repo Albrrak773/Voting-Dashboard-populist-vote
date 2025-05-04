@@ -1,15 +1,15 @@
-const API_TOKEN = "sk_prod_yztOc8RHXUP2N6EaTMABg3kHLu4RzLCgemnkndDXdp3horj0GCNVYfjZNaSVLNqUvICSdk8frpMChaQQaAAyNZ24oAmizQwGH8k_22186";
+const API_TOKEN = "sk_prod_sdt7cgBLDa97lnpv9T9eRIzwEeg8DqNzEgQXSdOCZhUnfki9BHUHTXnGA2qUYcV5YJymkfDeFl0UpjHh4fm9ZDWuJanKcp7XLqq_21281";
 
 const isBoys = true;
 const initializer_value = 0
 var is_fetching = true
 if (isBoys) {
-    var formCode = "99CNdGkFNUus";
+    var formCode = "8og31yYrENus";
 } else {
     var formCode = "wbjvtoxwHPus"
 }
 
-const submissions_url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=false&limit=150`;
+const submissions_url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=true&limit=150`;
 const questions_url = `https://api.fillout.com/v1/api/forms/${formCode}`
 
 const headers = {
@@ -44,6 +44,8 @@ async function get_fake_data(){
 };
 
 function shorten_name(project_name){
+    console.log("SHORTEN NAME GOT: ", project_name);
+    
     if (project_name.length > 32) {
         project_name = project_name.slice(0, 32) + "..."
     }
@@ -52,10 +54,13 @@ function shorten_name(project_name){
 
 function count_votes(responses, vote_count){
     for (let i = 0; i < responses.length; i++) {
-        let votes = responses[i].questions[0].value;
-        for (let j = 0; j < votes.length; j++) {
-            let project_name = shorten_name(votes[j]);
-            vote_count[project_name] = (vote_count[project_name] || 0) + 1;
+        let raw  = responses[i].questions[0].value;
+        let list = raw
+          .split(/\s*,\s*/)            // split on commas
+          .map(s => s.replace(/^\[|\]$/g, ""));  // strip brackets
+        
+        for (let project_name of list) {
+          vote_count[project_name] = (vote_count[project_name] || 0) + 1;
         }
     };
     return vote_count;
@@ -75,9 +80,12 @@ async function fetchSubmissions() {
     console.log("Initializing vote_count template…");
     const qRes  = await fetch(questions_url, { method: 'GET', headers });
     const qData = await qRes.json();
+
     qData.questions[0].options.forEach(opt => {
-      vote_count[shorten_name(opt.value)] = initializer_value;
+        let val = opt.value
+        vote_count[val] = initializer_value;
     });
+    console.log("Intial Lables: ", vote_count);
   
     try {
       // 2) page through ALL submissions by response-count
@@ -208,7 +216,7 @@ function updateChart(vote_count) {
     const labels = sortedEntries.map(entry => entry[0]);
     const values = sortedEntries.map(entry => entry[1]);
     const backgroundColors = labels.map((label, index) => getColorForLabel(label, index));
-
+    const canvas = document.getElementById('myChart');
     if (!chart) {
         const ctx = document.getElementById('myChart').getContext('2d');
         chart = new Chart(ctx, {
