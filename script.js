@@ -80,8 +80,7 @@ async function fetchSubmissions() {
     const qData = await qRes.json();
 
     qData.questions[0].options.forEach(opt => {
-        let val = opt.value
-        vote_count[val] = initializer_value;
+        vote_count[shorten_name(opt.value)] = initializer_value;
     });
     console.log("Intial Lables: ", vote_count);
   
@@ -215,6 +214,7 @@ function updateChart(vote_count) {
     const values = sortedEntries.map(entry => entry[1]);
     const backgroundColors = labels.map((label, index) => getColorForLabel(label, index));
     const canvas = document.getElementById('myChart');
+    
     if (!chart) {
         const ctx = document.getElementById('myChart').getContext('2d');
         chart = new Chart(ctx, {
