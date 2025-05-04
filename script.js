@@ -3,11 +3,7 @@ const API_TOKEN = "sk_prod_sdt7cgBLDa97lnpv9T9eRIzwEeg8DqNzEgQXSdOCZhUnfki9BHUHT
 const isBoys = true;
 const initializer_value = 0
 var is_fetching = true
-if (isBoys) {
-    var formCode = "8og31yYrENus";
-} else {
-    var formCode = "wbjvtoxwHPus"
-}
+var formCode = "8og31yYrENus";
 
 const submissions_url = `https://api.fillout.com/v1/api/forms/${formCode}/submissions?includePreview=true&limit=150`;
 const questions_url = `https://api.fillout.com/v1/api/forms/${formCode}`
