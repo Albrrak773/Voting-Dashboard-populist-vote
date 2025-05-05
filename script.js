@@ -42,8 +42,6 @@ async function get_fake_data(){
 };
 
 function shorten_name(project_name){
-    console.log("SHORTEN NAME GOT: ", project_name);
-    
     if (project_name.length > 32) {
         project_name = project_name.slice(0, 32) + "..."
     }
@@ -52,13 +50,10 @@ function shorten_name(project_name){
 
 function count_votes(responses, vote_count){
     for (let i = 0; i < responses.length; i++) {
-        let raw  = responses[i].questions[0].value;
-        let list = raw
-          .split(/\s*,\s*/)            // split on commas
-          .map(s => s.replace(/^\[|\]$/g, ""));  // strip brackets
-        
-        for (let project_name of list) {
-          vote_count[project_name] = (vote_count[project_name] || 0) + 1;
+        let votes = responses[i].questions[0].value;
+        for (let j = 0; j < votes.length; j++) {
+            let project_name = shorten_name(votes[j]);
+            vote_count[project_name] = (vote_count[project_name] || 0) + 1;
         }
     };
     return vote_count;
@@ -78,9 +73,8 @@ async function fetchSubmissions() {
     console.log("Initializing vote_count template…");
     const qRes  = await fetch(questions_url, { method: 'GET', headers });
     const qData = await qRes.json();
-
     qData.questions[0].options.forEach(opt => {
-        vote_count[shorten_name(opt.value)] = initializer_value;
+      vote_count[shorten_name(opt.value)] = initializer_value;
     });
     console.log("Intial Lables: ", vote_count);
   
