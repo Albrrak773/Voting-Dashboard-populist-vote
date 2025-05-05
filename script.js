@@ -168,7 +168,7 @@ function get_options(){
                         size: 16,
                         family: 'Arial'
                     },
-                    color: '#000'
+                    color: '#F4F7F5'
                 },
                 grid: {
                     display: false
@@ -181,7 +181,7 @@ function get_options(){
             },
             title: {
                 display: true,
-                color: '#2d2a66',
+                color: '#F4F7F5',
                 text: 'اصوات مشاريع التخرج',
                 font: {
                     size: 40,
@@ -194,7 +194,7 @@ function get_options(){
                 }
             },
             datalabels: {
-                color: '#000',
+                color: '#F4F7F5',
                 anchor: 'end',
                 align: 'right',
                 offset: 4,
