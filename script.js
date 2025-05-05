@@ -13,7 +13,6 @@ const headers = {
 
 
 
-
 let chart;
 const colorMap = {};
 
