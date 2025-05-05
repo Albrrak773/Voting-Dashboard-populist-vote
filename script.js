@@ -13,6 +13,7 @@ let timer;
 let seen    = new Set(); 
 let counter = 0
 
+
 let chart;
 const colorMap = {};
 const primaryColors = [
